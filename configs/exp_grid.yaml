@@ -25,3 +25,9 @@ split:
 
 cp:
   alpha: 0.1
+
+comparison:
+  enable: true              # turn on/off third-party baseline
+  impl: condtrust           # for now only this one
+  classifiers: ["old","new"]  # which base classifier to use for their method
+
