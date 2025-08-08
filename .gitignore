@@ -1,22 +1,41 @@
-# Byte-compiled / optimized / DLL files
+# -----------------
+# Python cache & venv
+# -----------------
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# Virtual environments
-env/
-venv/
+*.pyo
+*.pyd
+*.so
+.env/
 .venv/
+venv/
 
-# VSCode settings
-.vscode/
+# -----------------
+# Jupyter & logs
+# -----------------
+.ipynb_checkpoints/
+*.log
+*.tmp
 
-# Mac and system files
+# -----------------
+# Output folders
+# -----------------
+outputs/
+!outputs/README.md   # Keep placeholder if you want the folder in repo
+
+# -----------------
+# Temporary configs for sweeps
+# -----------------
+tmp_configs/
+
+# -----------------
+# OS files
+# -----------------
 .DS_Store
 Thumbs.db
 
-# Output directories
-outputs/
+# -----------------
+# VSCode / PyCharm project files
+# -----------------
+.vscode/
+.idea/
