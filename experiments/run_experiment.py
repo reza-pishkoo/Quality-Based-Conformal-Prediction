@@ -12,6 +12,7 @@ from src.refine import RefinedEstimator
 from src.conformal.cp import SplitCPClassifier
 from src.metrics import coverage, avg_set_size, mask_stats
 from src.utils import append_rows_csv, now_iso
+from third_party.mapie_cp import MapieCPClassifier
 
 
 def deep_set(d, dotted_key, value):
@@ -66,8 +67,11 @@ def run(cfg):
     p_te  = ref.predict_proba(X_te)
 
     # --- conformal calibration
-    cp = SplitCPClassifier(alpha=cfg["cp"]["alpha"]).fit(p_cal, y_cal)
-    sets_te = cp.predict_sets(p_te)  # boolean (n, K)
+    # --- conformal calibration with MAPIE
+    cp = MapieCPClassifier(ref, alpha=cfg["cp"]["alpha"], method="cumulated_score")
+    cp.fit(X_cal, y_cal)
+    sets_te = cp.predict_sets(X_te)  # (n, K) boolean array
+
 
     # --- evaluation
     overall = {
