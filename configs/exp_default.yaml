@@ -1,0 +1,24 @@
+seed: 2025
+experiment_name: exp_default
+output_dir: outputs
+output_csv: outputs/exp_default_results.csv   # single file per setting
+
+data:
+  size_old: 10000
+  size_new: 2000
+  p_old: 0.5
+  p_new: 0.5
+  w_old: [1.0, 0.0]
+  b_old: 0.0
+  w_new: [0.6, 0.8]
+  b_new: -0.2
+  sigma_x: 1.0
+  eta_old: 0.0
+  eta_new: 0.0
+  tau_easy: 1.0
+
+split:
+  cal_frac: 0.5
+
+cp:
+  alpha: 0.1
