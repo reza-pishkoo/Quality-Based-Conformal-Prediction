@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH -J qbcp_sweep
-#SBATCH -p debug            # <- change to a valid partition, or delete this line
-#SBATCH -t 00:30:00         # keep within partition limits
+#SBATCH -p main
+#SBATCH -t 04:00:00      # adjust as needed, up to 2-00:00:00 on main
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 
