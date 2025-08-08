@@ -1,0 +1,38 @@
+experiment_name: "sweep_rho2"
+seed: 1
+seeds: []
+
+data:
+  size_old: 10000
+  size_new: 1000
+
+  # Mixture weights
+  c_old: [0.6, 0.4]     # old = 0.8*P0 + 0.2*P1
+  c_new: [0.6, 0.4]     # new = 0.9*P0 + 0.1*P2
+
+  # P2 fraud probability
+  rho2: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+  # Means (2D)
+  mu0: [-3.0,  0.0]
+  mu1: [ 3.0,  0.0]
+  mu2: [ 0.0,  3.0]
+
+  # Variances and small off-diagonal covariance
+  var0: 1.2
+  var1: 0.8
+  var2: 1.5
+  cov_off: 0.1
+
+split:
+  cal_frac: 0.5
+
+cp:
+  alpha: 0.1
+
+comparison:
+  enable: true
+  impl: condtrust
+  classifiers: ["old","new"]
+
+output_csv: outputs/sweep_rho2_results.csv
