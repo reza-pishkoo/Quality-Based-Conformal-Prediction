@@ -1,0 +1,27 @@
+# configs/sweep_pold.yaml
+experiment_name: "sweep_pold"
+seed: 1               # used only if you don't run as an array
+seeds: []             # leave empty when using SLURM array
+
+data:
+  size_old: 10000
+  size_new: 2000
+  p_old: [0.5, 0.7]   # <-- sweep this
+  p_new: 0.5
+  w_old: [1.0, -1.0]
+  b_old: 0.0
+  w_new: [0.8, -0.8]
+  b_new: 0.0
+  sigma_x: 1.0
+  eta_old: 0.0
+  eta_new: 0.0
+  tau_easy: 0.5
+
+split:
+  cal_frac: 0.5
+
+cp:
+  alpha: 0.1
+
+# default (will be overridden by the sweep to point at /scratch)
+output_csv: outputs/sweep_pold_results.csv
