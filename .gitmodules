@@ -1,0 +1,6 @@
+[submodule "third_party/TrustScore"]
+	path = third_party/TrustScore
+	url = https://github.com/google/TrustScore.git
+[submodule "third_party/conditional-conformal-trust"]
+	path = third_party/conditional-conformal-trust
+	url = https://github.com/jivatneet/conditional-conformal-trust.git
