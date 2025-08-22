@@ -1,16 +1,16 @@
 experiment_name: "sweep_rho2"
 seed: 1
-seeds: []
+seeds: []                 # (array seeds will come from SLURM when we submit)
 
 data:
   size_old: 10000
   size_new: 1000
 
   # Mixture weights
-  c_old: [0.6, 0.4]     # old = 0.8*P0 + 0.2*P1
-  c_new: [0.6, 0.4]     # new = 0.9*P0 + 0.1*P2
+  c_old: [0.6, 0.4]
+  c_new: [0.6, 0.4]
 
-  # P2 fraud probability
+  # P2 label probability (SWEEP THIS)
   rho2: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
   # Means (2D)
