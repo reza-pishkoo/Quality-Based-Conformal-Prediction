@@ -16,6 +16,10 @@ case "$NAME" in
     CONFIG="configs/sweep_sizenew.yaml"
     ONLY_KEYS="data.size_new"
     ;;
+  --sweep_rho2)
+    CONFIG="configs/sweep_rho2.yaml"
+    ONLY_KEYS="data.rho2"
+    ;;
   *)
     echo "Unknown sweep name: $NAME"
     exit 1
