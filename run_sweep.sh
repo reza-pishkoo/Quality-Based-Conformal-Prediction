@@ -23,9 +23,9 @@ case "$NAME" in
 esac
 
 RESULTS_DIR="/scratch/$USER/qbcp_runs/${NAME#--}"
-SEEDS_N=100                   # how many seeds
-PARTITION="compute"           # or debug/main
-TIME="02:00:00"
+SEEDS_N=5                   # how many seeds
+PARTITION="debug"           # or debug/main
+TIME="00:30:00"
 CPUS=4
 MEM="8G"
 
