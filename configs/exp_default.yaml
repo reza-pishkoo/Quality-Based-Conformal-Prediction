@@ -1,30 +1,40 @@
 seed: 2025
 experiment_name: exp_default
 output_dir: outputs
-output_csv: outputs/exp_default_results.csv   # single file per setting
+output_csv: outputs/exp_default_results.csv
 
 data:
   size_old: 10000
   size_new: 2000
-  p_old: 0.5
-  p_new: 0.5
-  w_old: [1.0, 0.0]
-  b_old: 0.0
-  w_new: [0.6, 0.8]
-  b_new: -0.2
-  sigma_x: 1.0
-  eta_old: 0.0
-  eta_new: 0.0
-  tau_easy: 1.0
+  c_old: [0.6, 0.4]
+  c_new: [0.6, 0.4]
+  rho2: 0.8
+  mu0: [-3.0, 0.0]
+  mu1: [ 3.0, 0.0]
+  mu2: [ 0.0, 3.0]
+  var0: 1.2
+  var1: 0.8
+  var2: 1.5
+  cov_off: 0.1
 
 split:
-  cal_frac: 0.5
+  train_frac: 0.4   # NEW-TRAIN for new+quality
+  cal_frac:   0.3   # NEW-CAL for CP
+  # test_frac = 0.3 (implied)
+
+refine:
+  lam: 0.5       # shrink factor for p_new
+  beta: 0.0     # bias term for p_new
+
+quality:
+  mc_samples: 1  # >1 does Monte Carlo averaging (soft target)
+  balanced: false
 
 cp:
   alpha: 0.1
-
+  method: "score"   # you already default to this; try "cumulated_score" too
+  
 comparison:
-  enable: true              # turn on/off third-party baseline
-  impl: condtrust           # for now only this one
-  classifiers: ["old","new"]  # which base classifier to use for their method
-
+  enable: true
+  impl: condtrust
+  classifiers: ["old","new"]
