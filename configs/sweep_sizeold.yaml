@@ -1,16 +1,16 @@
-experiment_name: "sweep_size_old"
+experiment_name: "sweep_sizeold"
 seed: 1
-seeds: []
+seeds: []                 # (array seeds will come from SLURM when we submit)
 
 data:
   size_old: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
   size_new: 1000
 
   # Mixture weights
-  c_old: [0.6, 0.4]     # old = 0.8*P0 + 0.2*P1
-  c_new: [0.6, 0.4]     # new = 0.9*P0 + 0.1*P2
+  c_old: [0.6, 0.4]
+  c_new: [0.6, 0.4]
 
-  # P2 fraud probability
+  # P2 label probability
   rho2: 0.6
 
   # Means (2D)
@@ -35,4 +35,5 @@ comparison:
   impl: condtrust
   classifiers: ["old","new"]
 
-output_csv: outputs/sweep_rho2_results.csv
+# Only used for single-run mode; sweep.py overrides with parts/ paths
+output_csv: outputs/sweep_sizeold_results.csv
