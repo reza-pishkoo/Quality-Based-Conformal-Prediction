@@ -37,8 +37,16 @@ elif [[ $CONF == 2 ]]; then
   # Exp 2: sweep size_old at fixed rho2 (your sweep_sizeold)
   EXP_NAME="exp2_sizeold"
   RHO2_LIST=(0.6)
-  SIZEOLD_LIST=(1000 2000 3000 4000 5000 6000 7000 8000 9000 10000)
+  SIZEOLD_LIST=(5000 6000 7000 8000 9000 10000 11000 12000 13000 14000 15000)
   SIZENEW_LIST=(1000)
+  ALPHA_LIST=(0.1)
+  SEED_LIST=$(seq 1 100)     # ← 100 seeds
+elif [[ $CONF == 3 ]]; then
+  # Exp 3: sweep size_new at fixed rho2 (your sweep_sizenew)
+  EXP_NAME="exp3_sizenew"
+  RHO2_LIST=(0.6)
+  SIZEOLD_LIST=(10000)
+  SIZENEW_LIST=(100 200 300 400 500 600 700 800 900 1000 2000 3000 4000 5000)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)     # ← 100 seeds
 else
