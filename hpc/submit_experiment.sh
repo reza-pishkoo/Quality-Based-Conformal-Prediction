@@ -28,7 +28,7 @@ mkdir -p logs
 if [[ $CONF == 1 ]]; then
   # Exp 1: sweep rho2 at fixed sizes (your sweep_rho2)
   EXP_NAME="exp1_rho2"
-  RHO2_LIST=(0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0)
+  RHO2_LIST=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
   SIZEOLD_LIST=(10000)
   SIZENEW_LIST=(1000)
   ALPHA_LIST=(0.1)
