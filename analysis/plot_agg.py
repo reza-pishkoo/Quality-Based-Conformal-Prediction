@@ -93,9 +93,29 @@ def main():
     methods = sorted(G["method"].dropna().unique())
     label_for = defaultdict(lambda: None, label_map)
 
-    # Optional: distinct linestyles so everything can be black
-    styles = ["-","--","-.",":","-","--","-.",":"]
-    style_for = {m: styles[i % len(styles)] for i, m in enumerate(methods)}
+    # colors for lines + error bars
+    color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+    color_for = {m: color_cycle[i % len(color_cycle)] for i, m in enumerate(methods)}
+
+    # --- NEW: compute global y-limits shared across columns (per row) ----
+    cov_lo = (G["coverage_mean"] - G["coverage_sem"]).to_numpy()
+    cov_hi = (G["coverage_mean"] + G["coverage_sem"]).to_numpy()
+    cov_min = np.nanmin(cov_lo) if cov_lo.size else 0.0
+    cov_max = np.nanmax(cov_hi) if cov_hi.size else 1.0
+    cov_min = max(0.0, cov_min); cov_max = min(1.0, cov_max)
+    cov_span = max(1e-3, cov_max - cov_min)
+    cov_pad = 0.05 * cov_span
+    cov_ylim = (max(0.0, cov_min - cov_pad), min(1.0, cov_max + cov_pad))
+
+    sz_lo = (G["size_mean"] - G["size_sem"]).to_numpy()
+    sz_hi = (G["size_mean"] + G["size_sem"]).to_numpy()
+    sz_min = np.nanmin(sz_lo) if sz_lo.size else 0.0
+    sz_max = np.nanmax(sz_hi) if sz_hi.size else 1.0
+    sz_min = max(0.0, sz_min)
+    sz_span = max(1e-6, sz_max - sz_min)
+    sz_pad = 0.05 * sz_span
+    size_ylim = (max(0.0, sz_min - sz_pad), sz_max + sz_pad)
+    # ---------------------------------------------------------------------
 
     subsets = args.subset_order
     ncols = len(subsets)
@@ -123,30 +143,34 @@ def main():
             x = gm[xkey].values
             y_cov = gm["coverage_mean"].values
             y_sz  = gm["size_mean"].values
-            s_cov = gm["coverage_std"].fillna(0).values   # std across seeds
-            s_sz  = gm["size_std"].fillna(0).values
-
             order = np.argsort(x)
-            x, y_cov, y_sz, s_cov, s_sz = x[order], y_cov[order], y_sz[order], s_cov[order], s_sz[order]
+            x, y_cov, y_sz = x[order], y_cov[order], y_sz[order]
+            gm_ordered = gm.iloc[order]
+
             lbl = label_for[m] if label_for[m] else m
-            ls  = style_for[m]
 
-            # mean line (black)
-            ax_cov.plot(x, y_cov, marker="o", linestyle=ls, color="black", label=lbl)
-            ax_sz.plot(x,  y_sz,  marker="o", linestyle=ls, color="black", label=lbl)
+            ax_cov.plot(x, y_cov, marker="o", label=lbl, color=color_for[m])
+            ax_cov.errorbar(
+                x, y_cov, yerr=gm_ordered["coverage_sem"].values,
+                fmt="none", ecolor=color_for[m], elinewidth=1, capsize=3, capthick=1
+            )
 
-            # cap-only error bars (±1 std): no vertical line, just caps
-            ax_cov.errorbar(x, y_cov, yerr=s_cov, fmt="none",
-                            ecolor="black", elinewidth=0.0, capsize=5, capthick=1.0)
-            ax_sz.errorbar(x,  y_sz,  yerr=s_sz,  fmt="none",
-                           ecolor="black", elinewidth=0.0, capsize=5, capthick=1.0)
+            ax_sz.plot(x, y_sz, marker="o", label=lbl, color=color_for[m])
+            ax_sz.errorbar(
+                x, y_sz, yerr=gm_ordered["size_sem"].values,
+                fmt="none", ecolor=color_for[m], elinewidth=1, capsize=3, capthick=1
+            )
 
         ax_cov.set_title(titles.get(sub, sub))
         ax_cov.set_ylabel("Coverage")
         if cov_target is not None:
             ax_cov.axhline(cov_target, ls="--", lw=1, color="gray", alpha=0.7)
+        ax_cov.set_ylim(*cov_ylim)          # ← unified coverage y-scale
+
         ax_sz.set_ylabel("Set size")
         ax_sz.set_xlabel(xkey)
+        ax_sz.set_ylim(*size_ylim)          # ← unified size y-scale
+
         ax_cov.grid(alpha=0.2)
         ax_sz.grid(alpha=0.2)
         if j == ncols - 1:
