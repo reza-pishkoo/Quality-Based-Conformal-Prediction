@@ -1,42 +1,37 @@
-# -----------------
-# Python cache & venv
-# -----------------
+# === runtime artifacts ===
+/results/
+/logs/
+/outputs/
+/figures/
+/figs/
+/images/
+/Screenshots/
+/plots/
+
+# slurm / job logs
+slurm-*.out
+*.out
+*.err
+*.log
+
+# caches / temps
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.so
-.env/
-.venv/
-venv/
-
-# -----------------
-# Jupyter & logs
-# -----------------
-.ipynb_checkpoints/
-*.log
 *.tmp
+*.swp
 
-# -----------------
-# Output folders
-# -----------------
-outputs/
-!outputs/README.md   # Keep placeholder if you want the folder in repo
+# local data (if any; comment out if you want to track)
+/data/
 
-# -----------------
-# Temporary configs for sweeps
-# -----------------
-tmp_configs/
+# environments
+.venv/
+env/
+qbcp_env/
+*.egg-info/
+pip-wheel-metadata/
 
-# -----------------
-# OS files
-# -----------------
-.DS_Store
-Thumbs.db
-
-# -----------------
-# VSCode / PyCharm project files
-# -----------------
+# editors / OS
 .vscode/
 .idea/
-*.csv
+.DS_Store
+Thumbs.db

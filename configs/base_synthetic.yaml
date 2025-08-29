@@ -1,0 +1,30 @@
+experiment_name: "grid"
+seed: 1
+seeds: []
+
+data:
+  size_old: 10000
+  size_new: 1000
+  c_old: [0.6, 0.4]
+  c_new: [0.6, 0.4]
+  rho2: 0.6
+  mu0: [-3.0,  0.0]
+  mu1: [ 3.0,  0.0]
+  mu2: [ 0.0,  3.0]
+  var0: 1.2
+  var1: 0.8
+  var2: 1.5
+  cov_off: 0.1
+
+split:
+  cal_frac: 0.5
+
+cp:
+  alpha: 0.1
+
+comparison:
+  enable: true
+  impl: condtrust
+  classifiers: ["old","new"]
+
+output_csv: outputs/placeholder.csv
