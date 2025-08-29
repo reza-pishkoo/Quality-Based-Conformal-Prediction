@@ -4,7 +4,7 @@ set -euo pipefail
 ############################################
 # Choose which configuration to run
 ############################################
-CONF=1   # 1: sweep rho2, 2: sweep size_old  (add more cases as you go)
+CONF=${1:-1}   # 1: sweep rho2, 2: sweep size_old  (add more cases as you go)
 
 ############################################
 # Slurm defaults (adjust if you need more)

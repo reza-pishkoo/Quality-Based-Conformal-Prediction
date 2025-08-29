@@ -12,14 +12,12 @@ def coerce_numeric(df, cols):
     return df
 
 def detect_varying_key(df, candidates):
-    # choose the first candidate that varies
     for c in candidates:
         if c in df.columns and pd.to_numeric(df[c], errors="coerce").nunique(dropna=True) > 1:
             return c
-    # fallback: any varying numeric col that isn't a y-metric or obvious meta
     excluded = {"coverage","avg_size","n","alpha","seed"}
     for c in df.columns:
-        if c in excluded: 
+        if c in excluded:
             continue
         s = pd.to_numeric(df[c], errors="coerce")
         if s.notna().any() and s.nunique(dropna=True) > 1:
@@ -51,7 +49,6 @@ def main():
 
     df = pd.read_csv(args.csv)
 
-    # numeric coercion (keep broad; script is tolerant to missing cols)
     numeric_candidates = [
         "coverage","avg_size","n","alpha","seed",
         "size_old","size_new","sigma_x","eta_old","eta_new","tau_easy",
@@ -85,19 +82,20 @@ def main():
 
     G = agg_stats(df, xkey)
 
-    # consistent labeling
     label_map = {
         "ours_refined":  "Quality_Cond",
-        "ours_refine":   "Quality_Cond",   # tolerate alt spelling
+        "ours_refine":   "Quality_Cond",
         "condtrust_old": "Trust_Cond_old",
         "condtrust_new": "Trust_Cond_new",
         "split_old":     "Std_CP_old",
         "split_new":     "Std_CP_new",
     }
-    color_cycle = plt.rcParams["axes.prop_cycle"].by_key()["color"]
     methods = sorted(G["method"].dropna().unique())
-    color_for = {m: color_cycle[i % len(color_cycle)] for i, m in enumerate(methods)}
     label_for = defaultdict(lambda: None, label_map)
+
+    # Optional: distinct linestyles so everything can be black
+    styles = ["-","--","-.",":","-","--","-.",":"]
+    style_for = {m: styles[i % len(styles)] for i, m in enumerate(methods)}
 
     subsets = args.subset_order
     ncols = len(subsets)
@@ -107,7 +105,6 @@ def main():
 
     titles = {"easy_new":"Easy", "overall":"Full", "hard_new":"Hard"}
 
-    # target coverage line if alpha is fixed
     cov_target = None
     if "alpha" in df.columns and df["alpha"].notna().any():
         a = pd.to_numeric(df["alpha"], errors="coerce").dropna().unique()
@@ -122,14 +119,27 @@ def main():
             gm = Gj[Gj["method"] == m]
             if gm.empty:
                 continue
+
             x = gm[xkey].values
             y_cov = gm["coverage_mean"].values
             y_sz  = gm["size_mean"].values
+            s_cov = gm["coverage_std"].fillna(0).values   # std across seeds
+            s_sz  = gm["size_std"].fillna(0).values
+
             order = np.argsort(x)
-            x, y_cov, y_sz = x[order], y_cov[order], y_sz[order]
+            x, y_cov, y_sz, s_cov, s_sz = x[order], y_cov[order], y_sz[order], s_cov[order], s_sz[order]
             lbl = label_for[m] if label_for[m] else m
-            ax_cov.plot(x, y_cov, marker="o", label=lbl, color=color_for[m])
-            ax_sz.plot(x, y_sz,  marker="o", label=lbl, color=color_for[m])
+            ls  = style_for[m]
+
+            # mean line (black)
+            ax_cov.plot(x, y_cov, marker="o", linestyle=ls, color="black", label=lbl)
+            ax_sz.plot(x,  y_sz,  marker="o", linestyle=ls, color="black", label=lbl)
+
+            # cap-only error bars (±1 std): no vertical line, just caps
+            ax_cov.errorbar(x, y_cov, yerr=s_cov, fmt="none",
+                            ecolor="black", elinewidth=0.0, capsize=5, capthick=1.0)
+            ax_sz.errorbar(x,  y_sz,  yerr=s_sz,  fmt="none",
+                           ecolor="black", elinewidth=0.0, capsize=5, capthick=1.0)
 
         ax_cov.set_title(titles.get(sub, sub))
         ax_cov.set_ylabel("Coverage")
