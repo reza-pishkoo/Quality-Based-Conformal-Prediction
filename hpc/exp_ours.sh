@@ -10,7 +10,7 @@ SIZE_NEW="${5:?size_new}"
 ALPHA="${6:?alpha}"
 SEED="${7:?seed}"
 
-module load python/3.11
+module load python/3.11 || true
 source "$HOME/qbcp_env/bin/activate"
 
 cd "$HOME/Quality-Based-Conformal-Prediction"
@@ -29,10 +29,9 @@ OUT="$PART_DIR/part_seed${SEED}_rho2${RHO2}_sizeold${SIZE_OLD}_sizenew${SIZE_NEW
 
 python experiments/run_experiment.py \
   --config "$CONFIG" \
-  --set seed="$SEED" \
+  --seed "$SEED" \
   --set cp.alpha="$ALPHA" \
   --set data.rho2="$RHO2" \
   --set data.size_old="$SIZE_OLD" \
   --set data.size_new="$SIZE_NEW" \
-  --set output_csv="$OUT" \
-  --parallel-safe
+  --set output_csv="$OUT"
