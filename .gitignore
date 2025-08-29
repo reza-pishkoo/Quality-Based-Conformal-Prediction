@@ -1,5 +1,7 @@
 # === runtime artifacts ===
 /results/
+/results_hpc/
+/qbcp_runs/
 /logs/
 /outputs/
 /figures/
