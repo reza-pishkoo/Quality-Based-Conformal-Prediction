@@ -50,7 +50,7 @@ def main():
     df = pd.read_csv(args.csv)
 
     numeric_candidates = [
-        "coverage","avg_size","n","alpha","seed",
+        "coverage","avg_size","n","alpha","seed","c_old_0","c_old_1","c_new_0","c_new_1",
         "size_old","size_new","sigma_x","eta_old","eta_new","tau_easy",
         "p_old","p_new","w_old_0","w_old_1","w_new_0","w_new_1","b_old","b_new","cal_frac",
         "rho2","lam","beta",
@@ -70,7 +70,7 @@ def main():
     print("Subsets:", sorted(df["subset"].dropna().unique()))
     print("Methods:", sorted(df["method"].dropna().unique()))
 
-    xkey = args.xkey or detect_varying_key(df, ["rho2","size_new","size_old","p_old","p_new","cal_frac","lam","beta"])
+    xkey = args.xkey or detect_varying_key(df, ["rho2","size_new","size_old","c_old_0","c_new_0","p_old","p_new","cal_frac","lam","beta"])
     if xkey is None or xkey not in df.columns:
         print("Could not detect a varying x-axis column. Pass --xkey explicitly.")
         return

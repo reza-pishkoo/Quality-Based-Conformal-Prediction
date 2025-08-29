@@ -10,7 +10,11 @@ SIZE_NEW="${5:?size_new}"
 ALPHA="${6:?alpha}"
 SEED="${7:?seed}"
 
-module load python/3.11 || true
+# NEW (optional): priors as bracket strings, e.g. [0.7,0.3]
+COLD_STR="${8:-}"   # optional data.c_old
+CNEW_STR="${9:-}"   # optional data.c_new
+
+module load python/3.11
 source "$HOME/qbcp_env/bin/activate"
 
 cd "$HOME/Quality-Based-Conformal-Prediction"
@@ -27,6 +31,10 @@ mkdir -p "$PART_DIR"
 
 OUT="$PART_DIR/part_seed${SEED}_rho2${RHO2}_sizeold${SIZE_OLD}_sizenew${SIZE_NEW}_alpha${ALPHA}.csv"
 
+EXTRA=()
+[[ -n "$COLD_STR" ]] && EXTRA+=(--set "data.c_old=${COLD_STR}")
+[[ -n "$CNEW_STR" ]] && EXTRA+=(--set "data.c_new=${CNEW_STR}")
+
 python experiments/run_experiment.py \
   --config "$CONFIG" \
   --seed "$SEED" \
@@ -34,4 +42,5 @@ python experiments/run_experiment.py \
   --set data.rho2="$RHO2" \
   --set data.size_old="$SIZE_OLD" \
   --set data.size_new="$SIZE_NEW" \
-  --set output_csv="$OUT"
+  --set output_csv="$OUT" \
+  "${EXTRA[@]}"
