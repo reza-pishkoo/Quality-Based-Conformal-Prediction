@@ -106,7 +106,7 @@ def run(cfg):
         ref = RefinedEstimator(f_old, f_new, q_old)
 
     # --- CP on our refined estimator (MAPIE)
-    cp_method = cfg["cp"].get("method", "score")   # "score" or "cumulated_score"
+    cp_method = cfg["cp"].get("method", "cumulated_score")   # "score" or "cumulated_score"
     cp = MapieCPClassifier(ref, alpha=cfg["cp"]["alpha"], method=cp_method)
     cp.fit(X_cal, y_cal)
     sets_te = cp.predict_sets(X_te)
