@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+module purge
+module load python/3.10.16
+source /home1/pishkoo/Quality-Based-Conformal-Prediction/.venv/bin/activate
+
 set -euo pipefail
 
 # Args from submit_experiment.sh
