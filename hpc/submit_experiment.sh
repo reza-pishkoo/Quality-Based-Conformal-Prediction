@@ -23,7 +23,7 @@ CONFIG="configs/base_synthetic.yaml"
 mkdir -p logs
 
 ############################################
-# Grids (professor-style lists)
+# Grids
 ############################################
 if [[ $CONF == 1 ]]; then
   EXP_NAME="exp1_rho2"
@@ -32,7 +32,6 @@ if [[ $CONF == 1 ]]; then
   SIZENEW_LIST=(1000)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)
-
 elif [[ $CONF == 2 ]]; then
   EXP_NAME="exp2_sizeold"
   RHO2_LIST=(0.6)
@@ -40,7 +39,6 @@ elif [[ $CONF == 2 ]]; then
   SIZENEW_LIST=(1000)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)
-
 elif [[ $CONF == 3 ]]; then
   EXP_NAME="exp3_sizenew"
   RHO2_LIST=(0.6)
@@ -48,30 +46,28 @@ elif [[ $CONF == 3 ]]; then
   SIZENEW_LIST=(100 200 300 400 500 600 700 800 900 1000 2000 3000 4000 5000)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)
-
 elif [[ $CONF == 4 ]]; then
-  # NEW: sweep c_old = [p, 1-p]
   EXP_NAME="exp4_cold"
   RHO2_LIST=(0.6)
   SIZEOLD_LIST=(10000)
   SIZENEW_LIST=(1000)
-  COLD_P_LIST=(0.5 0.6 0.7 0.8 0.9)   # <-- edit these as you like
+  COLD_P_LIST=(0.5 0.6 0.7 0.8 0.9)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)
-
 elif [[ $CONF == 5 ]]; then
-  # NEW: sweep c_new = [p, 1-p]
   EXP_NAME="exp5_cnew"
   RHO2_LIST=(0.6)
   SIZEOLD_LIST=(10000)
   SIZENEW_LIST=(1000)
-  CNEW_P_LIST=(0.5 0.6 0.7 0.8 0.9)   # <-- edit these as you like
+  CNEW_P_LIST=(0.5 0.6 0.7 0.8 0.9)
   ALPHA_LIST=(0.1)
   SEED_LIST=$(seq 1 100)
-
 else
   echo "Unknown CONF=$CONF"; exit 1
 fi
+
+# <<< NEW: choose CP method for this sweep; default aps_custom (your APS), set to lac for standard CP
+CP_METHOD="${CP_METHOD:-aps_custom}"
 
 ORDP="sbatch --partition=$PARTITION --time=$TIME --mem=$MEM --cpus-per-task=$CPUS"
 
@@ -82,7 +78,6 @@ LOGDIR="logs/$EXP_NAME"
 mkdir -p "$LOGDIR"
 
 if [[ $CONF -le 3 ]]; then
-  # Existing three experiments
   for SEED in $SEED_LIST; do
     for RHO2 in "${RHO2_LIST[@]}"; do
       for SO in "${SIZEOLD_LIST[@]}"; do
@@ -90,57 +85,3 @@ if [[ $CONF -le 3 ]]; then
           for A in "${ALPHA_LIST[@]}"; do
             JOBN="${EXP_NAME}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
             OUTF="$LOGDIR/${JOBN}.out"
-            ERRF="$LOGDIR/${JOBN}.err"
-            CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED"
-            echo "$ORDP -J $JOBN -o $OUTF -e $ERRF $CMD"
-            $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" $CMD
-          done
-        done
-      done
-    done
-  done
-
-elif [[ $CONF == 4 ]]; then
-  # c_old sweep
-  for SEED in $SEED_LIST; do
-    for RHO2 in "${RHO2_LIST[@]}"; do
-      for SO in "${SIZEOLD_LIST[@]}"; do
-        for SN in "${SIZENEW_LIST[@]}"; do
-          for A in "${ALPHA_LIST[@]}"; do
-            for P in "${COLD_P_LIST[@]}"; do
-              Q=$(awk "BEGIN{printf \"%.3f\", 1-$P}")
-              COLD_STR="[$P,$Q]"
-              JOBN="${EXP_NAME}_cold${P}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
-              OUTF="$LOGDIR/${JOBN}.out"; ERRF="$LOGDIR/${JOBN}.err"
-              CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED $COLD_STR"
-              echo "$ORDP -J $JOBN -o $OUTF -e $ERRF $CMD"
-              $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" $CMD
-            done
-          done
-        done
-      done
-    done
-  done
-
-elif [[ $CONF == 5 ]]; then
-  # c_new sweep
-  for SEED in $SEED_LIST; do
-    for RHO2 in "${RHO2_LIST[@]}"; do
-      for SO in "${SIZEOLD_LIST[@]}"; do
-        for SN in "${SIZENEW_LIST[@]}"; do
-          for A in "${ALPHA_LIST[@]}"; do
-            for P in "${CNEW_P_LIST[@]}"; do
-              Q=$(awk "BEGIN{printf \"%.3f\", 1-$P}")
-              CNEW_STR="[$P,$Q]"
-              JOBN="${EXP_NAME}_cnew${P}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
-              OUTF="$LOGDIR/${JOBN}.out"; ERRF="$LOGDIR/${JOBN}.err"
-              CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED '' $CNEW_STR"
-              echo "$ORDP -J $JOBN -o $OUTF -e $ERRF $CMD"
-              $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" $CMD
-            done
-          done
-        done
-      done
-    done
-  done
-fi
