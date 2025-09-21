@@ -7,7 +7,7 @@ from src.models import train_old_model, train_new_model, train_quality_model
 from src.refine import RefinedEstimator
 from src.metrics import coverage, avg_set_size, mask_stats
 from src.utils import append_rows_csv, now_iso
-from third_party.mapie_cp import MapieCPClassifier
+# from third_party.mapie_cp import MapieCPClassifier
 from third_party.condtrust_adapter import run_condtrust_for_classifier
 
 
@@ -107,20 +107,18 @@ def run(cfg):
 
     # --- CP on our refined estimator (custom APS or MAPIE)
     alpha     = cfg["cp"]["alpha"]
-    cp_method = cfg["cp"].get("method", "aps_custom")   # "aps_custom" or "lac" (or "score")
+    cp_method = cfg["cp"].get("method", "aps_custom")   # "aps_custom" or "lac"
 
     if cp_method == "aps_custom":
-        # uses your APS procedure (cumulative prob + epsilon tie-breaking)
         from src.cp_aps import ConformalPredictorAPS
         cp = ConformalPredictorAPS(ref, random_state=cfg.get("seed", 2025))
         cp.fit(X_cal, y_cal.astype(int), alpha=alpha)
-        sets_te = cp.predict_sets_bool(X_te, allow_empty=True)   # -> (n_test, K) bool array
+        sets_te = cp.predict_sets_bool(X_te, allow_empty=True)
     else:
-        # fallback to MAPIE (LAC) for standard split CP
-        from third_party.mapie_cp import MapieCPClassifier
+        from third_party.mapie_cp import MapieCPClassifier   # <— import only if used
         cp = MapieCPClassifier(ref, alpha=alpha, method=cp_method)  # "lac" for binary
         cp.fit(X_cal, y_cal)
-        sets_te = cp.predict_sets(X_te)                            # -> (n_test, K) bool array
+        sets_te = cp.predict_sets(X_te)                           # -> (n_test, K) bool array
 
     # --- evaluation for our method (unchanged)
     overall    = {"coverage": coverage(y_te, sets_te), "avg_size": avg_set_size(sets_te), "n": int(len(y_te))}
