@@ -85,3 +85,55 @@ if [[ $CONF -le 3 ]]; then
           for A in "${ALPHA_LIST[@]}"; do
             JOBN="${EXP_NAME}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
             OUTF="$LOGDIR/${JOBN}.out"
+            ERRF="$LOGDIR/${JOBN}.err"
+            CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED"
+            echo "$ORDP -J $JOBN -o $OUTF -e $ERRF --export=ALL,CP_METHOD=$CP_METHOD $CMD"   # <<< NEW
+            $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" --export=ALL,CP_METHOD="$CP_METHOD" $CMD   # <<< NEW
+          done
+        done
+      done
+    done
+  done
+
+elif [[ $CONF == 4 ]]; then
+  for SEED in $SEED_LIST; do
+    for RHO2 in "${RHO2_LIST[@]}"; do
+      for SO in "${SIZEOLD_LIST[@]}"; do
+        for SN in "${SIZENEW_LIST[@]}"; do
+          for A in "${ALPHA_LIST[@]}"; do
+            for P in "${COLD_P_LIST[@]}"; do
+              Q=$(awk "BEGIN{printf \"%.3f\", 1-$P}")
+              COLD_STR="[$P,$Q]"
+              JOBN="${EXP_NAME}_cold${P}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
+              OUTF="$LOGDIR/${JOBN}.out"; ERRF="$LOGDIR/${JOBN}.err"
+              CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED $COLD_STR"
+              echo "$ORDP -J $JOBN -o $OUTF -e $ERRF --export=ALL,CP_METHOD=$CP_METHOD $CMD"   # <<< NEW
+              $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" --export=ALL,CP_METHOD="$CP_METHOD" $CMD   # <<< NEW
+            done
+          done
+        done
+      done
+    done
+  done
+
+elif [[ $CONF == 5 ]]; then
+  for SEED in $SEED_LIST; do
+    for RHO2 in "${RHO2_LIST[@]}"; do
+      for SO in "${SIZEOLD_LIST[@]}"; do
+        for SN in "${SIZENEW_LIST[@]}"; do
+          for A in "${ALPHA_LIST[@]}"; do
+            for P in "${CNEW_P_LIST[@]}"; do
+              Q=$(awk "BEGIN{printf \"%.3f\", 1-$P}")
+              CNEW_STR="[$P,$Q]"
+              JOBN="${EXP_NAME}_cnew${P}_r${RHO2}_so${SO}_sn${SN}_a${A}_s${SEED}"
+              OUTF="$LOGDIR/${JOBN}.out"; ERRF="$LOGDIR/${JOBN}.err"
+              CMD="hpc/exp_ours.sh $EXP_NAME $CONFIG $RHO2 $SO $SN $A $SEED '' $CNEW_STR"
+              echo "$ORDP -J $JOBN -o $OUTF -e $ERRF --export=ALL,CP_METHOD=$CP_METHOD $CMD"   # <<< NEW
+              $ORDP -J "$JOBN" -o "$OUTF" -e "$ERRF" --export=ALL,CP_METHOD="$CP_METHOD" $CMD   # <<< NEW
+            done
+          done
+        done
+      done
+    done
+  done
+fi
